@@ -25,7 +25,7 @@ function addTile(grid) {
   return { grid: next, pos }
 }
 
-function slideLeft(row) {
+export function slideLeft(row) {
   const arr = row.filter(v => v !== 0)
   const merged = new Set()
   for (let i = 0; i < arr.length - 1; i++) {
