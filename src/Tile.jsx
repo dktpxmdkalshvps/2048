@@ -22,7 +22,7 @@ const getFontSize = (val) => {
   return 'text-3xl sm:text-4xl'
 }
 
-export default function Tile({ value, isMerged, isNew }) {
+const Tile = React.memo(function Tile({ value, isMerged, isNew }) {
   const [animClass, setAnimClass] = useState('')
   const prevVal = useRef(value)
 
@@ -69,4 +69,6 @@ export default function Tile({ value, isMerged, isNew }) {
       </span>
     </div>
   )
-}
+})
+
+export default Tile;
