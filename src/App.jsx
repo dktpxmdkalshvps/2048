@@ -22,7 +22,7 @@ function Cursor() {
 }
 
 export default function App() {
-  const { grid, score, best, moves, status, newTilePos, mergedPositions, restart } = use2048()
+  const { grid, score, best, moves, status, newTilePos, restart } = use2048()
   const [showOverlay, setShowOverlay] = useState(false)
   const [cmdLine, setCmdLine] = useState('')
 
@@ -108,7 +108,6 @@ export default function App() {
           <Board
             grid={grid}
             newTilePos={newTilePos}
-            mergedPositions={mergedPositions}
           />
 
           {/* Game over overlay */}

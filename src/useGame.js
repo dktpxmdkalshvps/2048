@@ -47,7 +47,6 @@ function rotate90(grid) {
 function applyMove(grid, dir) {
   let g = grid.map(r => [...r])
   let totalScore = 0
-  const mergedPositions = new Set()
 
   // rotate so we always slide left
   const rotations = { left: 0, down: 1, right: 2, up: 3 }
@@ -59,8 +58,6 @@ function applyMove(grid, dir) {
     const { row: slid, merged } = slideLeft(row)
     merged.forEach(ci => {
       totalScore += slid[ci]
-      // map back after de-rotation later (store as row/col in rotated space)
-      mergedPositions.add(`${ri},${ci}`)
     })
     if (slid.join() !== row.join()) moved = true
     return slid
@@ -71,7 +68,7 @@ function applyMove(grid, dir) {
   const unRots = (4 - rots) % 4
   for (let i = 0; i < unRots; i++) result = rotate90(result)
 
-  return { grid: result, moved, score: totalScore, mergedPositions }
+  return { grid: result, moved, score: totalScore }
 }
 
 function canMove(grid) {
@@ -100,7 +97,6 @@ export function use2048() {
       moves: 0,
       status: 'playing', // 'playing' | 'won' | 'lost'
       newTilePos: r2.pos,
-      mergedPositions: new Set(),
     }
   }, [])
 
@@ -110,7 +106,7 @@ export function use2048() {
     setState(prev => {
       if (prev.status === 'lost') return prev
 
-      const { grid: moved, moved: didMove, score: gained, mergedPositions } =
+      const { grid: moved, moved: didMove, score: gained } =
         applyMove(prev.grid, dir)
 
       if (!didMove) return prev
@@ -133,7 +129,6 @@ export function use2048() {
         moves: prev.moves + 1,
         status,
         newTilePos: newPos,
-        mergedPositions,
       }
     })
   }, [])
