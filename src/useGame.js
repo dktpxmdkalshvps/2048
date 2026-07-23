@@ -62,7 +62,12 @@ function applyMove(grid, dir) {
       // map back after de-rotation later (store as row/col in rotated space)
       mergedPositions.add(`${ri},${ci}`)
     })
-    if (slid.join() !== row.join()) moved = true
+    for (let i = 0; i < COLS; i++) {
+      if (slid[i] !== row[i]) {
+        moved = true
+        break
+      }
+    }
     return slid
   })
 
