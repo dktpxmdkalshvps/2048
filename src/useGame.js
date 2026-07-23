@@ -41,7 +41,16 @@ function slideLeft(row) {
 }
 
 function rotate90(grid) {
-  return grid[0].map((_, ci) => grid.map(r => r[ci]).reverse())
+  const R = grid.length
+  const C = grid[0].length
+  const out = new Array(C)
+  for (let c = 0; c < C; c++) {
+    out[c] = new Array(R)
+    for (let r = 0; r < R; r++) {
+      out[c][R - 1 - r] = grid[r][c]
+    }
+  }
+  return out
 }
 
 function applyMove(grid, dir) {
