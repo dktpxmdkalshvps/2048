@@ -8,10 +8,10 @@ function emptyGrid() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0))
 }
 
+const sharedRandomArray = new Uint32Array(1)
 function secureRandom() {
-  const array = new Uint32Array(1)
-  crypto.getRandomValues(array)
-  return array[0] / (0xffffffff + 1)
+  crypto.getRandomValues(sharedRandomArray)
+  return sharedRandomArray[0] / (0xffffffff + 1)
 }
 
 function randomEmpty(grid) {
