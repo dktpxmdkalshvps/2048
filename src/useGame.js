@@ -85,7 +85,7 @@ function applyMove(grid, dir) {
     merged.forEach(ci => {
       totalScore += slid[ci]
       // map back after de-rotation later (store as row/col in rotated space)
-      mergedPositions.add(`${ri},${ci}`)
+      mergedPositions.add((ri << 8) | ci)
     })
     for (let i = 0; i < COLS; i++) {
       if (slid[i] !== row[i]) {
