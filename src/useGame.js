@@ -77,12 +77,24 @@ function applyMove(grid, dir) {
     return slid
   })
 
+  // map mergedPositions back to original space
+  const finalMergedPositions = new Set()
+  const unRots = (4 - rots) % 4
+  mergedPositions.forEach(pos => {
+    let [r, c] = pos.split(',').map(Number)
+    for (let i = 0; i < unRots; i++) {
+      const tempR = r
+      r = c
+      c = COLS - 1 - tempR
+    }
+    finalMergedPositions.add(`${r},${c}`)
+  })
+
   // un-rotate
   let result = newGrid
-  const unRots = (4 - rots) % 4
   for (let i = 0; i < unRots; i++) result = rotate90(result)
 
-  return { grid: result, moved, score: totalScore, mergedPositions }
+  return { grid: result, moved, score: totalScore, mergedPositions: finalMergedPositions }
 }
 
 function canMove(grid) {
