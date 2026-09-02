@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // value → [bg, text, border]
 const TILE_STYLES = {
@@ -24,7 +24,6 @@ const getFontSize = (val) => {
 
 export default function Tile({ value, isMerged, isNew }) {
   const [animClass, setAnimClass] = useState('')
-  const prevVal = useRef(value)
 
   useEffect(() => {
     if (isMerged && value !== 0) {
@@ -42,7 +41,6 @@ export default function Tile({ value, isMerged, isNew }) {
     }
   }, [isNew, value])
 
-  prevVal.current = value
   const styles = TILE_STYLES[value] || TILE_STYLES[2048]
   const [bg, color, border] = styles
 
