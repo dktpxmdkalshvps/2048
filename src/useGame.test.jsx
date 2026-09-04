@@ -144,3 +144,35 @@ describe('use2048', () => {
     // or exposing the internal board state for mock injection.
   })
 })
+
+const LS_BEST = '2048_terminal_best'
+
+describe('use2048 security fix', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('should parse valid base-10 number', () => {
+    localStorage.setItem(LS_BEST, '1024')
+    const { result } = renderHook(() => use2048())
+    expect(result.current.best).toBe(1024)
+  })
+
+  it('should return 0 when parsing an invalid string (NaN)', () => {
+    localStorage.setItem(LS_BEST, 'invalid_score')
+    const { result } = renderHook(() => use2048())
+    expect(result.current.best).toBe(0)
+  })
+
+  it('should not parse octal formatted strings using base 8 implicitly', () => {
+    localStorage.setItem(LS_BEST, '010')
+    const { result } = renderHook(() => use2048())
+    expect(result.current.best).toBe(10)
+  })
+
+  it('should evaluate 0x-prefixed strings as NaN or 0 in base 10', () => {
+    localStorage.setItem(LS_BEST, '0x10')
+    const { result } = renderHook(() => use2048())
+    expect(result.current.best).toBe(0)
+  })
+})

@@ -115,7 +115,12 @@ function canMove(grid) {
 
 export function use2048() {
   const getBest = () => {
-    try { return parseInt(localStorage.getItem(LS_BEST) || '0') } catch { return 0 }
+    try {
+      const parsed = parseInt(localStorage.getItem(LS_BEST), 10)
+      return isNaN(parsed) ? 0 : parsed
+    } catch {
+      return 0
+    }
   }
   const saveBest = (v) => { try { localStorage.setItem(LS_BEST, v) } catch {} }
 
