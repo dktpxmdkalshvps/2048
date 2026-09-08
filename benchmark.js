@@ -171,3 +171,70 @@ const timeNewAM = performance.now() - startAM;
 console.log(`Old applyMove took ${timeOldAM.toFixed(2)}ms`);
 console.log(`New applyMove took ${timeNewAM.toFixed(2)}ms`);
 console.log(`Improvement: ${((timeOldAM - timeNewAM) / timeOldAM * 100).toFixed(2)}%`);
+
+// Benchmark for randomEmpty
+const ROWS = 4;
+const COLS = 4;
+
+function randomEmptyOld(grid) {
+  const empty = []
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (grid[r][c] === 0) empty.push([r, c])
+  if (!empty.length) return null
+  return empty[Math.floor(Math.random() * empty.length)]
+}
+
+function randomEmptyNew(grid) {
+  const empty = []
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (grid[r][c] === 0) empty.push(r * COLS + c)
+  if (!empty.length) return null
+  const idx = empty[Math.floor(Math.random() * empty.length)]
+  return [Math.floor(idx / COLS), idx % COLS]
+}
+
+const testGridRE = [
+  [0, 2, 0, 8],
+  [2, 0, 4, 0],
+  [0, 0, 0, 2],
+  [8, 2, 0, 0]
+];
+
+function randomEmptyOldSecure(grid) {
+  const empty = []
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (grid[r][c] === 0) empty.push([r, c])
+  if (!empty.length) return null
+  return empty[Math.floor(secureRandomNew() * empty.length)]
+}
+
+function randomEmptyNewSecure(grid) {
+  const empty = []
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (grid[r][c] === 0) empty.push(r * COLS + c)
+  if (!empty.length) return null
+  const idx = empty[Math.floor(secureRandomNew() * empty.length)]
+  return [Math.floor(idx / COLS), idx % COLS]
+}
+
+const K_RE = 100000;
+
+let startRE = performance.now();
+for (let i = 0; i < K_RE; i++) {
+  randomEmptyOldSecure(testGridRE);
+}
+const timeOldRE = performance.now() - startRE;
+
+startRE = performance.now();
+for (let i = 0; i < K_RE; i++) {
+  randomEmptyNewSecure(testGridRE);
+}
+const timeNewRE = performance.now() - startRE;
+
+console.log(`Old randomEmpty took ${timeOldRE.toFixed(2)}ms`);
+console.log(`New randomEmpty took ${timeNewRE.toFixed(2)}ms`);
+console.log(`Improvement: ${((timeOldRE - timeNewRE) / timeOldRE * 100).toFixed(2)}%`);

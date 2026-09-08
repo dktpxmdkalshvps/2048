@@ -18,9 +18,10 @@ function randomEmpty(grid) {
   const empty = []
   for (let r = 0; r < ROWS; r++)
     for (let c = 0; c < COLS; c++)
-      if (grid[r][c] === 0) empty.push([r, c])
+      if (grid[r][c] === 0) empty.push(r * COLS + c)
   if (!empty.length) return null
-  return empty[Math.floor(secureRandom() * empty.length)]
+  const idx = empty[Math.floor(secureRandom() * empty.length)]
+  return [Math.floor(idx / COLS), idx % COLS]
 }
 
 function addTile(grid) {
