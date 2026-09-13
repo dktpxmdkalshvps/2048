@@ -91,19 +91,32 @@ describe('use2048', () => {
     expect(result.current.score).toBe(scoreBefore)
   })
 
-  it('handles movement correctly in other directions', () => {
+  it('handles movement correctly in all directions (left, right, up, down)', () => {
+    // Setup grid with initial tiles
     randomFloats = [
-      14/16, 0.1,
-      14/15, 0.1,
-      0, 0.95
+      0, 0.1, // pos (0,0) val 2
+      14/15, 0.1, // pos (3,3) val 2
+      0, 0.1, // after move right: add tile val 2
+      0, 0.1, // after move down: add tile val 2
+      0, 0.1, // after move up: add tile val 2
+      0, 0.1, // after move left: add tile val 2
     ]
     const { result } = renderHook(() => use2048())
 
     act(() => result.current.move('right'))
-    act(() => result.current.move('up'))
-    act(() => result.current.move('down'))
+    expect(result.current.grid[0][3]).toBe(2)
+    expect(result.current.grid[3][3]).toBe(2)
 
-    expect(result.current.moves).toBeGreaterThan(0)
+    act(() => result.current.move('down'))
+    expect(result.current.grid[3][3]).toBe(4) // 2 and 2 merged into 4
+
+    act(() => result.current.move('up'))
+    expect(result.current.grid[0][3]).toBeGreaterThan(0)
+
+    act(() => result.current.move('left'))
+    expect(result.current.grid[0][0]).toBeGreaterThan(0)
+
+    expect(result.current.moves).toBe(4)
   })
 
   it('restarts the game and resets state but keeps best score', () => {
