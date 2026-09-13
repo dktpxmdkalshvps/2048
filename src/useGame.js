@@ -48,27 +48,15 @@ function slideLeft(row) {
 }
 
 function rotateGrid(grid, rots) {
-  if (rots === 0) return grid.map(r => [...r])
-  const newGrid = [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ]
-  if (rots === 1) {
+  let result = grid.map(r => [...r])
+  for (let i = 0; i < (rots % 4); i++) {
+    const next = emptyGrid()
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++)
-        newGrid[r][c] = grid[ROWS - 1 - c][r]
-  } else if (rots === 2) {
-    for (let r = 0; r < ROWS; r++)
-      for (let c = 0; c < COLS; c++)
-        newGrid[r][c] = grid[ROWS - 1 - r][COLS - 1 - c]
-  } else if (rots === 3) {
-    for (let r = 0; r < ROWS; r++)
-      for (let c = 0; c < COLS; c++)
-        newGrid[r][c] = grid[c][COLS - 1 - r]
+        next[r][c] = result[ROWS - 1 - c][r]
+    result = next
   }
-  return newGrid
+  return result
 }
 
 function applyMove(grid, dir) {
