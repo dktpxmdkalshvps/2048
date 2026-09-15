@@ -238,3 +238,51 @@ const timeNewRE = performance.now() - startRE;
 console.log(`Old randomEmpty took ${timeOldRE.toFixed(2)}ms`);
 console.log(`New randomEmpty took ${timeNewRE.toFixed(2)}ms`);
 console.log(`Improvement: ${((timeOldRE - timeNewRE) / timeOldRE * 100).toFixed(2)}%`);
+
+// Mock localStorage for Node environment if missing
+if (typeof globalThis.localStorage === 'undefined') {
+  const store = new Map()
+  globalThis.localStorage = {
+    getItem: (key) => store.get(key) || null,
+    setItem: (key, value) => store.set(key, String(value)),
+    clear: () => store.clear(),
+  }
+}
+
+// Benchmark for localStorage side-effect in state updater vs deferred
+const LS_ITERATIONS = 100000;
+
+function syncStateUpdaterWithLS(prevScore, gained) {
+  const newScore = prevScore + gained;
+  const prevBest = prevScore;
+  const newBest = Math.max(prevBest, newScore);
+  if (newBest > prevBest) {
+    try { localStorage.setItem('2048_terminal_best', newBest) } catch {}
+  }
+  return { score: newScore, best: newBest };
+}
+
+function pureStateUpdater(prevScore, gained) {
+  const newScore = prevScore + gained;
+  const prevBest = prevScore;
+  const newBest = Math.max(prevBest, newScore);
+  return { score: newScore, best: newBest };
+}
+
+start = performance.now();
+for (let i = 0; i < LS_ITERATIONS; i++) {
+  syncStateUpdaterWithLS(i, 4);
+}
+const timeSyncLS = performance.now() - start;
+
+start = performance.now();
+for (let i = 0; i < LS_ITERATIONS; i++) {
+  const newState = pureStateUpdater(i, 4);
+  // deferred effect execution simulated once per update:
+  try { localStorage.setItem('2048_terminal_best', newState.best) } catch {}
+}
+const timeDeferredLS = performance.now() - start;
+
+console.log(`Sync localStorage in reducer took ${timeSyncLS.toFixed(2)}ms`);
+console.log(`Pure reducer + deferred effect took ${timeDeferredLS.toFixed(2)}ms`);
+console.log(`Improvement: ${((timeSyncLS - timeDeferredLS) / timeSyncLS * 100).toFixed(2)}%`);
