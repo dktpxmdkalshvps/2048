@@ -129,6 +129,10 @@ export function use2048() {
 
   const [state, setState] = useState(() => ({ ...newGame(), best: getBest() }))
 
+  useEffect(() => {
+    saveBest(state.best)
+  }, [state.best])
+
   const move = useCallback((dir) => {
     setState(prev => {
       if (prev.status === 'lost') return prev
@@ -141,7 +145,6 @@ export function use2048() {
       const { grid: withTile, pos: newPos } = addTile(moved)
       const newScore = prev.score + gained
       const newBest = Math.max(prev.best, newScore)
-      if (newBest > prev.best) saveBest(newBest)
 
       const hasWon = withTile.some(row => row.some(v => v === 2048))
       const status = !canMove(withTile) ? 'lost'
