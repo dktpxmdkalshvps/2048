@@ -48,8 +48,10 @@ function slideLeft(row) {
 }
 
 function rotateGrid(grid, rots) {
-  let result = grid.map(r => [...r])
-  for (let i = 0; i < (rots % 4); i++) {
+  const numRots = rots % 4
+  if (numRots === 0) return grid
+  let result = grid
+  for (let i = 0; i < numRots; i++) {
     const next = emptyGrid()
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++)
