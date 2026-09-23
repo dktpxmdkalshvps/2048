@@ -4,17 +4,13 @@ import { use2048 } from './useGame'
 
 let randomFloats = []
 let floatIndex = 0
-const MAX_UINT32 = 0xffffffff + 1
 
 describe('use2048', () => {
   beforeEach(() => {
-    vi.stubGlobal('crypto', {
-      getRandomValues: (arr) => {
-        const float = randomFloats[floatIndex] !== undefined ? randomFloats[floatIndex] : 0
-        floatIndex++
-        arr[0] = Math.floor(float * MAX_UINT32)
-        return arr
-      }
+    vi.spyOn(Math, 'random').mockImplementation(() => {
+      const float = randomFloats[floatIndex] !== undefined ? randomFloats[floatIndex] : 0
+      floatIndex++
+      return float
     })
     randomFloats = []
     floatIndex = 0

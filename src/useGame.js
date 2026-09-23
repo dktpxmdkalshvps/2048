@@ -8,19 +8,13 @@ function emptyGrid() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0))
 }
 
-const sharedRandomArray = new Uint32Array(1)
-function secureRandom() {
-  crypto.getRandomValues(sharedRandomArray)
-  return sharedRandomArray[0] / (0xffffffff + 1)
-}
-
 function randomEmpty(grid) {
   const empty = []
   for (let r = 0; r < ROWS; r++)
     for (let c = 0; c < COLS; c++)
       if (grid[r][c] === 0) empty.push(r * COLS + c)
   if (!empty.length) return null
-  const idx = empty[Math.floor(secureRandom() * empty.length)]
+  const idx = empty[Math.floor(Math.random() * empty.length)]
   return [Math.floor(idx / COLS), idx % COLS]
 }
 
@@ -28,7 +22,7 @@ function addTile(grid) {
   const pos = randomEmpty(grid)
   if (!pos) return { grid, pos: null }
   const next = grid.map(r => [...r])
-  next[pos[0]][pos[1]] = secureRandom() < 0.9 ? 2 : 4
+  next[pos[0]][pos[1]] = Math.random() < 0.9 ? 2 : 4
   return { grid: next, pos }
 }
 
