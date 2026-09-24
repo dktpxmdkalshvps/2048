@@ -27,17 +27,26 @@ function addTile(grid) {
 }
 
 function slideLeft(row) {
-  const arr = row.filter(v => v !== 0)
+  const result = [0, 0, 0, 0]
   const merged = new Set()
-  for (let i = 0; i < arr.length - 1; i++) {
-    if (arr[i] === arr[i + 1] && !merged.has(i)) {
-      arr[i] *= 2
-      arr[i + 1] = 0
-      merged.add(i)
+  let write = 0
+  let skipNext = false
+
+  for (let i = 0; i < COLS; i++) {
+    const val = row[i]
+    if (val === 0) continue
+
+    if (write > 0 && !skipNext && result[write - 1] === val) {
+      result[write - 1] *= 2
+      merged.add(write - 1)
+      skipNext = true
+    } else {
+      result[write] = val
+      write++
+      skipNext = false
     }
   }
-  const result = arr.filter(v => v !== 0)
-  while (result.length < COLS) result.push(0)
+
   return { row: result, merged }
 }
 
