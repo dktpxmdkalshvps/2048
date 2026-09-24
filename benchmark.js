@@ -30,11 +30,8 @@ const timeNew = performance.now() - start;
 console.log(`New secureRandom took ${timeNew.toFixed(2)}ms`);
 console.log(`Improvement: ${((timeOld - timeNew) / timeOld * 100).toFixed(2)}%`);
 
-// Benchmark for applyMove
-const COLS_AM = 4;
-const ROWS_AM = 4;
-
-function slideLeftAM(row) {
+// Benchmark for slideLeft
+function slideLeftOld(row) {
   const arr = row.filter(v => v !== 0)
   const merged = new Set()
   for (let i = 0; i < arr.length - 1; i++) {
@@ -45,8 +42,67 @@ function slideLeftAM(row) {
     }
   }
   const result = arr.filter(v => v !== 0)
-  while (result.length < COLS_AM) result.push(0)
+  while (result.length < 4) result.push(0)
   return { row: result, merged }
+}
+
+function slideLeftNew(row) {
+  const result = [0, 0, 0, 0]
+  const merged = new Set()
+  let write = 0
+  let skipNext = false
+
+  for (let i = 0; i < 4; i++) {
+    const val = row[i]
+    if (val === 0) continue
+
+    if (write > 0 && !skipNext && result[write - 1] === val) {
+      result[write - 1] *= 2
+      merged.add(write - 1)
+      skipNext = true
+    } else {
+      result[write] = val
+      write++
+      skipNext = false
+    }
+  }
+
+  return { row: result, merged }
+}
+
+const testRows = [
+  [2, 2, 0, 0],
+  [2, 0, 2, 2],
+  [2, 2, 2, 2],
+  [0, 4, 0, 4],
+  [2, 4, 8, 16],
+  [0, 0, 0, 0],
+];
+
+const N_SLIDE = 1000000;
+
+let startSlide = performance.now();
+for (let i = 0; i < N_SLIDE; i++) {
+  slideLeftOld(testRows[i % testRows.length]);
+}
+const timeOldSlide = performance.now() - startSlide;
+
+startSlide = performance.now();
+for (let i = 0; i < N_SLIDE; i++) {
+  slideLeftNew(testRows[i % testRows.length]);
+}
+const timeNewSlide = performance.now() - startSlide;
+
+console.log(`Old slideLeft took ${timeOldSlide.toFixed(2)}ms`);
+console.log(`New slideLeft took ${timeNewSlide.toFixed(2)}ms`);
+console.log(`Improvement: ${((timeOldSlide - timeNewSlide) / timeOldSlide * 100).toFixed(2)}%`);
+
+// Benchmark for applyMove
+const COLS_AM = 4;
+const ROWS_AM = 4;
+
+function slideLeftAM(row) {
+  return slideLeftNew(row);
 }
 
 function rotate90AM(grid) {
