@@ -342,3 +342,68 @@ const timeDeferredLS = performance.now() - start;
 console.log(`Sync localStorage in reducer took ${timeSyncLS.toFixed(2)}ms`);
 console.log(`Pure reducer + deferred effect took ${timeDeferredLS.toFixed(2)}ms`);
 console.log(`Improvement: ${((timeSyncLS - timeDeferredLS) / timeSyncLS * 100).toFixed(2)}%`);
+
+// Benchmark for rotateGrid
+function emptyGridRG() {
+  return Array.from({ length: 4 }, () => Array(4).fill(0))
+}
+
+function rotateGridOld(grid, rots) {
+  const numRots = rots % 4
+  if (numRots === 0) return grid
+  let result = grid
+  for (let i = 0; i < numRots; i++) {
+    const next = emptyGridRG()
+    for (let r = 0; r < 4; r++)
+      for (let c = 0; c < 4; c++)
+        next[r][c] = result[3 - c][r]
+    result = next
+  }
+  return result
+}
+
+function rotateGridNew(grid, rots) {
+  const numRots = ((rots % 4) + 4) % 4
+  if (numRots === 0) return grid
+  const next = emptyGridRG()
+  if (numRots === 1) {
+    for (let r = 0; r < 4; r++)
+      for (let c = 0; c < 4; c++)
+        next[r][c] = grid[3 - c][r]
+  } else if (numRots === 2) {
+    for (let r = 0; r < 4; r++)
+      for (let c = 0; c < 4; c++)
+        next[r][c] = grid[3 - r][3 - c]
+  } else if (numRots === 3) {
+    for (let r = 0; r < 4; r++)
+      for (let c = 0; c < 4; c++)
+        next[r][c] = grid[c][3 - r]
+  }
+  return next
+}
+
+const testGridRG = [
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9, 10, 11, 12],
+  [13, 14, 15, 16]
+];
+
+const N_RG = 1000000;
+const rotsRG = [0, 1, 2, 3];
+
+let startRG = performance.now();
+for (let i = 0; i < N_RG; i++) {
+  rotateGridOld(testGridRG, rotsRG[i % 4]);
+}
+const timeOldRG = performance.now() - startRG;
+
+startRG = performance.now();
+for (let i = 0; i < N_RG; i++) {
+  rotateGridNew(testGridRG, rotsRG[i % 4]);
+}
+const timeNewRG = performance.now() - startRG;
+
+console.log(`Old rotateGrid took ${timeOldRG.toFixed(2)}ms`);
+console.log(`New rotateGrid took ${timeNewRG.toFixed(2)}ms`);
+console.log(`Improvement: ${((timeOldRG - timeNewRG) / timeOldRG * 100).toFixed(2)}%`);
