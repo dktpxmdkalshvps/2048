@@ -48,7 +48,7 @@ function slideLeftOld(row) {
 
 function slideLeftNew(row) {
   const result = [0, 0, 0, 0]
-  const merged = new Set()
+  const merged = []
   let write = 0
   let skipNext = false
 
@@ -58,7 +58,7 @@ function slideLeftNew(row) {
 
     if (write > 0 && !skipNext && result[write - 1] === val) {
       result[write - 1] *= 2
-      merged.add(write - 1)
+      merged.push(write - 1)
       skipNext = true
     } else {
       result[write] = val
@@ -122,11 +122,12 @@ function applyMoveOld(grid, dir) {
   let moved = false
   const newGrid = g.map((row, ri) => {
     const { row: slid, merged } = slideLeftAM(row)
-    merged.forEach(ci => {
+    for (let k = 0; k < merged.length; k++) {
+      const ci = merged[k]
       totalScore += slid[ci]
       // map back after de-rotation later (store as row/col in rotated space)
       mergedPositions.add(`${ri},${ci}`)
-    })
+    }
     for (let i = 0; i < COLS_AM; i++) {
       if (slid[i] !== row[i]) {
         moved = true
@@ -181,11 +182,12 @@ function applyMoveNew(grid, dir) {
   let moved = false
   const newGrid = g.map((row, ri) => {
     const { row: slid, merged } = slideLeftAM(row)
-    merged.forEach(ci => {
+    for (let k = 0; k < merged.length; k++) {
+      const ci = merged[k]
       totalScore += slid[ci]
       // map back after de-rotation later (store as row/col in rotated space)
       mergedPositions.add(`${ri},${ci}`)
-    })
+    }
     for (let i = 0; i < COLS_AM; i++) {
       if (slid[i] !== row[i]) {
         moved = true
