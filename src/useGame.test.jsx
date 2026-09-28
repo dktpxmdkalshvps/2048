@@ -64,6 +64,7 @@ describe('use2048', () => {
     expect(result.current.score).toBe(4)
     expect(result.current.best).toBe(4)
     expect(result.current.moves).toBe(1)
+    expect(result.current.mergedPositions.has('0,0')).toBe(true)
   })
 
   it('does not add new tile if no tiles moved', () => {

@@ -71,12 +71,27 @@ describe('Board Component', () => {
     })
   })
 
-  it('always passes isMerged as false', () => {
+  it('passes isMerged as false when mergedPositions is not provided or empty', () => {
     render(<Board grid={emptyGrid} />)
     const tiles = screen.getAllByTestId('mock-tile')
 
     tiles.forEach((tile) => {
       expect(tile.getAttribute('data-is-merged')).toBe('false')
     })
+  })
+
+  it('passes isMerged as true to tiles whose positions are in mergedPositions', () => {
+    const mergedPositions = new Set(['0,1', '2,3'])
+    render(<Board grid={emptyGrid} mergedPositions={mergedPositions} />)
+    const tiles = screen.getAllByTestId('mock-tile')
+
+    // Tile (0, 1) -> index 0 * 4 + 1 = 1
+    // Tile (2, 3) -> index 2 * 4 + 3 = 11
+    expect(tiles[1].getAttribute('data-is-merged')).toBe('true')
+    expect(tiles[11].getAttribute('data-is-merged')).toBe('true')
+
+    // Verify other tiles remain false
+    expect(tiles[0].getAttribute('data-is-merged')).toBe('false')
+    expect(tiles[2].getAttribute('data-is-merged')).toBe('false')
   })
 })
