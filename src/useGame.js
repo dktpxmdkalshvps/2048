@@ -72,7 +72,7 @@ function rotateGrid(grid, rots) {
 
 function applyMove(grid, dir) {
   let totalScore = 0
-  const mergedPositions = new Set()
+  const mergedInRotated = new Set()
 
   // rotate so we always slide left
   const rotations = { left: 0, down: 1, right: 2, up: 3 }
@@ -86,7 +86,7 @@ function applyMove(grid, dir) {
       const ci = merged[k]
       totalScore += slid[ci]
       // map back after de-rotation later (store as row/col in rotated space)
-      mergedPositions.add(`${ri},${ci}`)
+      mergedInRotated.add(`${ri},${ci}`)
     }
     for (let i = 0; i < COLS; i++) {
       if (slid[i] !== row[i]) {
@@ -100,6 +100,28 @@ function applyMove(grid, dir) {
   // un-rotate
   const unRots = (4 - rots) % 4
   const result = rotateGrid(newGrid, unRots)
+
+  const mergedPositions = new Set()
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      let ri = r
+      let ci = c
+      if (unRots === 1) {
+        ri = ROWS - 1 - c
+        ci = r
+      } else if (unRots === 2) {
+        ri = ROWS - 1 - r
+        ci = COLS - 1 - c
+      } else if (unRots === 3) {
+        ri = c
+        ci = COLS - 1 - r
+      }
+
+      if (mergedInRotated.has(`${ri},${ci}`)) {
+        mergedPositions.add(`${r},${c}`)
+      }
+    }
+  }
 
   return { grid: result, moved, score: totalScore, mergedPositions }
 }
