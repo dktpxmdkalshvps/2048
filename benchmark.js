@@ -409,3 +409,35 @@ const timeNewRG = performance.now() - startRG;
 console.log(`Old rotateGrid took ${timeOldRG.toFixed(2)}ms`);
 console.log(`New rotateGrid took ${timeNewRG.toFixed(2)}ms`);
 console.log(`Improvement: ${((timeOldRG - timeNewRG) / timeOldRG * 100).toFixed(2)}%`);
+
+// Benchmark for emptyGrid
+function emptyGridOld() {
+  return Array.from({ length: 4 }, () => Array(4).fill(0))
+}
+
+function emptyGridNew() {
+  return [
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ]
+}
+
+const N_EG = 1000000;
+
+let startEG = performance.now();
+for (let i = 0; i < N_EG; i++) {
+  emptyGridOld();
+}
+const timeOldEG = performance.now() - startEG;
+
+startEG = performance.now();
+for (let i = 0; i < N_EG; i++) {
+  emptyGridNew();
+}
+const timeNewEG = performance.now() - startEG;
+
+console.log(`Old emptyGrid took ${timeOldEG.toFixed(2)}ms`);
+console.log(`New emptyGrid took ${timeNewEG.toFixed(2)}ms`);
+console.log(`Improvement: ${((timeOldEG - timeNewEG) / timeOldEG * 100).toFixed(2)}%`);
