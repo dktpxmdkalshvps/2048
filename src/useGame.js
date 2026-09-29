@@ -5,7 +5,12 @@ const COLS = 4
 const LS_BEST = '2048_terminal_best'
 
 function emptyGrid() {
-  return Array.from({ length: ROWS }, () => Array(COLS).fill(0))
+  return [
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ]
 }
 
 function randomEmpty(grid) {
