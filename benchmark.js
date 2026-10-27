@@ -171,7 +171,7 @@ function rotateUnifiedAM(grid, rots) {
 
 function applyMoveNew(grid, dir) {
   let totalScore = 0
-  const mergedPositions = new Set()
+  let mergedInRotated = 0
 
   // rotate so we always slide left
   const rotations = { left: 0, down: 1, right: 2, up: 3 }
@@ -185,8 +185,8 @@ function applyMoveNew(grid, dir) {
     for (let k = 0; k < merged.length; k++) {
       const ci = merged[k]
       totalScore += slid[ci]
-      // map back after de-rotation later (store as row/col in rotated space)
-      mergedPositions.add(`${ri},${ci}`)
+      // bitmask for row/col in rotated space
+      mergedInRotated |= (1 << (ri * 4 + ci))
     }
     for (let i = 0; i < COLS_AM; i++) {
       if (slid[i] !== row[i]) {
@@ -200,6 +200,30 @@ function applyMoveNew(grid, dir) {
   // un-rotate
   const unRots = (4 - rots) % 4
   const result = rotateUnifiedAM(newGrid, unRots)
+
+  const mergedPositions = new Set()
+  if (mergedInRotated !== 0) {
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 4; c++) {
+        let ri = r
+        let ci = c
+        if (unRots === 1) {
+          ri = 3 - c
+          ci = r
+        } else if (unRots === 2) {
+          ri = 3 - r
+          ci = 3 - c
+        } else if (unRots === 3) {
+          ri = c
+          ci = 3 - r
+        }
+
+        if ((mergedInRotated & (1 << (ri * 4 + ci))) !== 0) {
+          mergedPositions.add(`${r},${c}`)
+        }
+      }
+    }
+  }
 
   return { grid: result, moved, score: totalScore, mergedPositions }
 }
