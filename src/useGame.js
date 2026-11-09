@@ -26,7 +26,10 @@ function randomEmpty(grid) {
 function addTile(grid) {
   const pos = randomEmpty(grid)
   if (!pos) return { grid, pos: null }
-  const next = grid.map(r => [...r])
+  const next = new Array(ROWS)
+  for (let r = 0; r < ROWS; r++) {
+    next[r] = grid[r].slice()
+  }
   next[pos[0]][pos[1]] = Math.random() < 0.9 ? 2 : 4
   return { grid: next, pos }
 }
