@@ -441,3 +441,40 @@ const timeNewEG = performance.now() - startEG;
 console.log(`Old emptyGrid took ${timeOldEG.toFixed(2)}ms`);
 console.log(`New emptyGrid took ${timeNewEG.toFixed(2)}ms`);
 console.log(`Improvement: ${((timeOldEG - timeNewEG) / timeOldEG * 100).toFixed(2)}%`);
+
+// Benchmark for addTile array copying
+function addTileOldCopy(grid) {
+  return grid.map(r => [...r])
+}
+
+function addTileNewCopy(grid) {
+  const next = new Array(4)
+  for (let r = 0; r < 4; r++) {
+    next[r] = grid[r].slice()
+  }
+  return next
+}
+
+const N_ATC = 1000000;
+const testGridATC = [
+  [0, 2, 0, 4],
+  [4, 0, 8, 0],
+  [0, 16, 0, 32],
+  [64, 0, 128, 0]
+];
+
+let startATC = performance.now();
+for (let i = 0; i < N_ATC; i++) {
+  addTileOldCopy(testGridATC);
+}
+const timeOldATC = performance.now() - startATC;
+
+startATC = performance.now();
+for (let i = 0; i < N_ATC; i++) {
+  addTileNewCopy(testGridATC);
+}
+const timeNewATC = performance.now() - startATC;
+
+console.log(`Old addTile copying took ${timeOldATC.toFixed(2)}ms`);
+console.log(`New addTile copying took ${timeNewATC.toFixed(2)}ms`);
+console.log(`Improvement: ${((timeOldATC - timeNewATC) / timeOldATC * 100).toFixed(2)}%`);
