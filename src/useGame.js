@@ -34,7 +34,7 @@ function addTile(grid) {
   return { grid: next, pos }
 }
 
-function slideLeft(row) {
+export function slideLeft(row) {
   const result = [0, 0, 0, 0]
   const merged = []
   let write = 0
